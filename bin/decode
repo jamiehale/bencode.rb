@@ -1,0 +1,61 @@
+#! /usr/bin/env ruby
+
+$LOAD_PATH << File.expand_path( '../lib', File.dirname( __FILE__ ) )
+require( 'bencode' )
+
+def usage
+  puts "decode <filename>"
+  exit( 0 )
+end
+
+def indent( i )
+  "  " * i
+end
+
+def dump( o, level = 0 )
+  if o.instance_of? Hash
+    dump_hash( o, level )
+  elsif o.instance_of? String
+    dump_string( o, level )
+  elsif o.instance_of? Array
+    dump_array( o, level )
+  elsif o.instance_of? Fixnum
+    puts indent( level ) + o.to_s
+  else
+    puts "Unknown: " + o.class.to_s
+  end
+end
+
+def dump_string( s, level )
+  if s.ascii_only?
+    puts indent( level ) + "\"#{s}\""
+  else
+    puts indent( level ) + "Non-ascii"
+  end
+end
+
+def dump_array( a, level )
+  puts indent( level ) + "["
+  a.each do |value|
+    dump( value, level + 1 )
+  end
+  puts indent( level ) + "]"
+end
+
+def dump_hash( h, level )
+  puts indent( level ) + "{"
+  h.each do |key,value|
+    puts indent( level + 1 ) + key + ": "
+    dump( value, level + 2 )
+  end
+  puts indent( level ) + "}"
+end
+
+usage if ARGV.empty?
+torrent_filename = ARGV.shift
+
+decoder = Bencode::Decoder.new()
+contents = decoder.decode( File.binread( torrent_filename ) )
+
+dump( contents )
+

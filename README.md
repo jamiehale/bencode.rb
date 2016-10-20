@@ -1,12 +1,9 @@
 # Bencode.rb
 
-This will be a dinky little Ruby library for working with bittorrent bencoded files.
+This is a little Ruby gem for working with bittorrent bencoded files.
 
-For now, the proof of concept a) is ugly, and b) runs all specs.
+    Bencode::Encoder.new().encode( <object to be encoded> )
+    Bencode::Decoder.new().decode( <bencoded string> )
 
-Run specs with:
-
-    rspec poc/bencode.rb
-
-More To Come (TM).
+It requires nothing for runtime, and RSpec for testing.
 
